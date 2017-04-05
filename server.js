@@ -23,9 +23,15 @@ if (NODE_ENV !== 'development') {
 
 const { username, password } = config.get('MongoDB');
 const DEFAULT_DB_URI = `mongodb://${username}:${password}@ds145790.mlab.com:45790/local-api-db`;
-connect(process.env.MONGODB_URI || DEFAULT_DB_URI).then(() => {
-  logging.info('Database connected successfully.');
-});
+
+(async () => {
+  try {
+    await connect(process.env.MONGODB_URI || DEFAULT_DB_URI);
+    logging.info('Database connected successfully.');
+  } catch (err) {
+    logging.error(err);
+  }
+})();
 
 app.use(parser.cookie());
 app.use(parser.body.urlencoded({ extended: false }));
