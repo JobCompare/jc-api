@@ -17,6 +17,7 @@
   "author": "Timothy Kua",
   "license": "MIT",
   "dependencies": {
+    "apidoc": "0.16.0",
     "body-parser": "^1.16.0",
     "bugsnag": "^1.9.1",
     "bunyan": "^1.8.8",
@@ -33,7 +34,6 @@
     "randomatic": "^1.1.6"
   },
   "devDependencies": {
-    "apidoc": "0.16.0",
     "babel-eslint": "^7.1.1",
     "chai": "^3.5.0",
     "eslint": "^3.15.0",

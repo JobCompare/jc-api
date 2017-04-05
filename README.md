@@ -13,7 +13,7 @@ Server-side application for Job Compare.
 
 ## Setup
 1. Make sure you have access to UNIX/POSIX commands (i.e. Windows OS may need [cygwin](https://www.cygwin.com/) or a VM)
-2. Download and/or install [Node.js](https://nodejs.org/en/) (v7.5.0). If you have previously installed Node.js, you may use [nvm](https://github.com/creationix/nvm) to change your node version locally.
+2. Download and/or install [Node.js](https://nodejs.org/en/) (v7.8.0). If you have previously installed Node.js, you may use [nvm](https://github.com/creationix/nvm) to change your node version locally.
 3. Download and/or install [Mongodb](https://www.mongodb.com/download-center)
 4. Clone this repo: `git clone https://github.com/JobCompare/jc-server.git`
 5. Install dependencies: `npm install`
@@ -31,7 +31,7 @@ Please use `eslint` script to confirm that your code is using correct syntax.
 ./node_modules/.bin/eslint <filename>
 ```
 ### Package Management
-JobCompare uses [Node.js](https://nodejs.org/en/) (v7.5.0) as a main package manager.
+JobCompare uses [Node.js](https://nodejs.org/en/) (v7.8.0) as a main package manager.
 Understanding Node.js can help significantly during development.
 Feel free to use `nvm` to manage your Node.js version locally.
 ```
