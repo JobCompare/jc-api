@@ -1,0 +1,11 @@
+bin/resources/
+db/
+log/
+tests/
+.editorconfig
+.eslintignore
+.eslintrc
+.gitignore
+.nvmrc
+README.md
+LICENSE
