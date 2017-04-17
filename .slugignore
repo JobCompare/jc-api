@@ -1,0 +1,9 @@
+bin/resources/
+tests/
+.editorconfig
+.eslintignore
+.eslintrc
+.gitignore
+.nvmrc
+README.md
+LICENSE
