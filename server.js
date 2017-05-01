@@ -1,4 +1,4 @@
-/* eslint-disable global-require, no-console*/
+/* eslint-disable global-require */
 const express = require('express');
 const bugsnag = require('bugsnag');
 const cors = require('cors');
@@ -19,9 +19,13 @@ const parser = {
   cookie: require('cookie-parser'),
 };
 
-if (SERVER_ENV !== 'local' && config.get('BUGSNAG_KEY')) {
-  bugsnag.register(config.get('BUGSNAG_KEY'), { releaseStage: SERVER_ENV, sendCode: true });
-  app.use(bugsnag.requestHandler);
+if (SERVER_ENV !== 'local') {
+  if (config.get('BUGSNAG_KEY')) {
+    bugsnag.register(config.get('BUGSNAG_KEY'), { releaseStage: SERVER_ENV, sendCode: true });
+    app.use(bugsnag.requestHandler);
+  } else {
+    logger.warn('No Bugsnag key found.');
+  }
 }
 
 app.use(cors());

@@ -1,4 +1,4 @@
-/* eslint-disable no-console*/
+/* eslint-disable no-console */
 require('colors');
 
 const bunyan = require('bunyan');
@@ -26,15 +26,24 @@ const loggly = (name, level) => {
 };
 
 const native = () => {
-  const colors = Map({ warn: 'yellow', error: 'red' });
-  const levels = Set(['log', 'info', 'warn', 'error', 'debug']);
-  const result = {};
+  const colors = Map({ debug: 'cyan', warn: 'yellow', error: 'red' });
+  const levels = Set(['info', 'debug', 'warn', 'error']);
+  const result = { log: console.log };
   levels.forEach((level) => {
-    result[level] = level !== 'log' ? (input) => {
-      const prefix = `[${level.toUpperCase()}]`.bold;
-      const text = input[colors.get(level) || 'reset'];
-      return console[level](`${prefix}\t${text.replace('\n', '\n\t')}`);
-    } : console.log;
+    result[level] = (...inputs) => {
+      if (inputs.length === 0) {
+        return; // do not log when no inputs has been passed in
+      }
+      const prefix = `[${level.toUpperCase()}]\t`.bold[colors.get(level) || 'reset'];
+      const contents = inputs.map((input) => {
+        if (typeof input === 'string') {
+          return input.split('\n').join(`\n${prefix} `);
+        }
+        return input;
+      });
+      contents.unshift(prefix);
+      (console[level] || console.log)(...contents);
+    };
   });
   return result;
 };
