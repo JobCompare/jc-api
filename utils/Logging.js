@@ -49,7 +49,7 @@ const native = () => {
 };
 
 class Logging {
-  static logger(name, level='debug') {
+  static logger(name, level=(config.get('LOGGING_LEVEL') || 'debug')) {
     return ({ native, loggly })[config.get('LOGGING_LOGGER') || 'native'](name, level);
   }
 }
