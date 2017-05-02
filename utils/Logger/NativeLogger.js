@@ -7,24 +7,17 @@ const Logger = require('./Logger');
 class NativeLogger extends Logger {
   constructor(name='', level='') {
     super(name, level);
+    this.display = true;
     this.init();
   }
 
   init() {
-    const colors = Map({ debug: 'cyan', warn: 'yellow', error: 'red' });
+    const colors = Map({ debug: 'cyan', warn: 'yellow', error: 'red', fatal: 'red' });
     const levels = Set(['info', 'trace', 'debug', 'warn', 'error', 'fatal']);
-
-    // disable native logger in staging or production (use Bunyan instead)
-    if ((process.env.NODE_ENV || 'development') !== 'development') {
-      levels.forEach((level) => {
-        this[level] = () => {};
-      });
-      return;
-    }
 
     levels.forEach((level) => {
       this[level] = (...inputs) => {
-        if (inputs.length === 0) return; // do not log when no inputs has been passed in
+        if (inputs.length === 0) return ''; // do not log when no inputs has been passed in
 
         const prefix = `[${level.toUpperCase()}]\t`.bold[colors.get(level) || 'reset'];
         const contents = inputs.map((input) => {
@@ -35,13 +28,19 @@ class NativeLogger extends Logger {
         });
         contents.unshift(prefix);
 
-        if (level === 'trace' || level === 'debug') {
-          level = 'log';
-        } else if (level === 'fatal') {
-          level = 'error';
-        }
+        const lambda = (() => {
+          if (level === 'trace' || level === 'debug' || !this.outstream[level]) {
+            return 'log';
+          } else if (level === 'fatal') {
+            return 'error';
+          }
+          return level;
+        })();
 
-        this.outstream[level](...contents);
+        if (this.display) {
+          this.outstream[lambda](...contents);
+        }
+        return contents.join(' ');
       };
     });
   }
