@@ -6,7 +6,7 @@ const connect = require('camo').connect;
 
 const config = require('./utils/Configuration');
 const Router = require('./app/routes/Router');
-const logger = require('./utils/Logging').logger('server');
+const logger = require('./utils/Logger/LoggerFactory').create('server');
 const HTTPError = require('./HTTPError');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
