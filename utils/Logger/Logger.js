@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const config = require('../Configuration');
+const LoggerLevel = require('./LoggerLevel');
 
 class Logger {
   constructor(name='', level=config.get('LOGGING_LEVEL')) {
@@ -9,27 +10,52 @@ class Logger {
   }
 
   log(...inputs) {
-    return this.outstream.log(...inputs);
+    const value = Infinity;
+    if (LoggerLevel.compare(this.level, value) <= 0) {
+      this.outstream.log(...inputs);
+    }
   }
 
-  info(...inputs) {
-    return this.outstream.info(...inputs);
+  trace(...inputs) {
+    const value = LoggerLevel.get('trace').value;
+    if (LoggerLevel.compare(this.level, value) <= 0) {
+      this.outstream.error(...inputs);
+    }
   }
 
   debug(...inputs) {
-    return this.log(...inputs);
+    const value = LoggerLevel.get('debug').value;
+    if (LoggerLevel.compare(this.level, value) <= 0) {
+      this.outstream.log(...inputs);
+    }
+  }
+
+  info(...inputs) {
+    const value = LoggerLevel.get('info').value;
+    if (LoggerLevel.compare(this.level, value) <= 0) {
+      this.outstream.info(...inputs);
+    }
   }
 
   warn(...inputs) {
-    return this.outstream.warn(...inputs);
+    const value = LoggerLevel.get('warn').value;
+    if (LoggerLevel.compare(this.level, value) <= 0) {
+      this.outstream.warn(...inputs);
+    }
   }
 
   error(...inputs) {
-    return this.outstream.error(...inputs);
+    const value = LoggerLevel.get('error').value;
+    if (LoggerLevel.compare(this.level, value) <= 0) {
+      this.outstream.error(...inputs);
+    }
   }
 
   fatal(...inputs) {
-    return this.error(...inputs);
+    const value = LoggerLevel.get('fatal').value;
+    if (LoggerLevel.compare(this.level, value) <= 0) {
+      this.outstream.error(...inputs);
+    }
   }
 }
 

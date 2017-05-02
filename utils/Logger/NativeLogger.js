@@ -1,25 +1,27 @@
 require('colors');
 
-const { Map, Set } = require('immutable');
-
 const Logger = require('./Logger');
+const LoggerLevel = require('./LoggerLevel');
 
 class NativeLogger extends Logger {
-  constructor(name='', level='') {
+  constructor(name='', level='debug') {
     super(name, level);
     this.display = true;
     this.init();
   }
 
   init() {
-    const colors = Map({ debug: 'cyan', warn: 'yellow', error: 'red', fatal: 'red' });
-    const levels = Set(['info', 'trace', 'debug', 'warn', 'error', 'fatal']);
+    const { level: threshold, display: viewable } = this;
+    const levels = LoggerLevel.levels();
 
     levels.forEach((level) => {
       this[level] = (...inputs) => {
-        if (inputs.length === 0) return ''; // do not log when no inputs has been passed in
+        if (inputs.length === 0 || LoggerLevel.compare(threshold, level) > 0) {
+          return ''; // do not log when no inputs has been passed in
+        }
 
-        const prefix = `[${level.toUpperCase()}]\t`.bold[colors.get(level) || 'reset'];
+        const { color, lambda } = (LoggerLevel.get(level) || { color: 'reset', lambda: 'log' });
+        const prefix = `[${level.toUpperCase()}]\t`.bold[color];
         const contents = inputs.map((input) => {
           if (typeof input === 'string') {
             return input.split('\n').join(`\n${prefix} `);
@@ -28,16 +30,7 @@ class NativeLogger extends Logger {
         });
         contents.unshift(prefix);
 
-        const lambda = (() => {
-          if (level === 'trace' || level === 'debug' || !this.outstream[level]) {
-            return 'log';
-          } else if (level === 'fatal') {
-            return 'error';
-          }
-          return level;
-        })();
-
-        if (this.display) {
+        if (viewable) {
           this.outstream[lambda](...contents);
         }
         return contents.join(' ');

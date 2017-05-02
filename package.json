@@ -10,9 +10,6 @@
     "lint": "node_modules/.bin/eslint .",
     "clean": "bash ./bin/clean.sh"
   },
-  "istanbul" : {
-    "reporter": ["clover"]
-  },
   "author": "Timothy Kua",
   "license": "MIT",
   "dependencies": {
