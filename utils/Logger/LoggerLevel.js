@@ -61,6 +61,10 @@ class LoggerLevel {
   static levels() {
     return Set(lookup.keySeq().toArray());
   }
+
+  static valid(key) {
+    return !!this.get(key);
+  }
 }
 
 /* LoggerLevel static constants */
