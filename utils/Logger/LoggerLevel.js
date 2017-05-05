@@ -4,12 +4,12 @@ const lookup = Map({
   trace: {
     color: 'cyan',
     value: 10,
-    lambda: 'log',
+    lambda: 'trace',
   },
   debug: {
     color: 'cyan',
     value: 20,
-    lambda: 'log',
+    lambda: 'trace',
   },
   info: {
     color: 'reset',
@@ -29,29 +29,29 @@ const lookup = Map({
   fatal: {
     color: 'red',
     value: 60,
-    lambda: 'fatal',
+    lambda: 'error',
   },
 });
 
 class LoggerLevel {
   static get(key) {
-    return lookup.get(key);
+    switch (key) {
+      case 'hide': return { color: 'reset', value: Infinity };
+      case 'show': return { color: 'reset', value: -Infinity };
+      default: return lookup.get(key) || { color: 'reset', value: 0, lambda: 'log' };
+    }
   }
 
   static getValue(key) {
-    const ref = this.get(key);
-    return ref ? ref.value : 0;
+    return this.get(key).value;
   }
 
   static getColor(key) {
-    const ref = this.get(key);
-    return ref ? ref.color : 'reset';
+    return this.get(key).color;
   }
 
   static compare(a, b) {
-    const numerator = this.getValue(a) - this.getValue(b);
-    const denominator = Math.abs(numerator);
-    return !denominator ? numerator : (numerator/denominator);
+    return Math.sign(this.getValue(a) - this.getValue(b));
   }
 
   static equals(a, b) {
@@ -63,7 +63,7 @@ class LoggerLevel {
   }
 
   static valid(key) {
-    return !!this.get(key);
+    return !!lookup.get(key);
   }
 }
 

@@ -23,7 +23,6 @@ class LogglyLogger extends Logger {
       }, { stream: process.stdout }],
     });
   }
-
 }
 
 module.exports = LogglyLogger;
