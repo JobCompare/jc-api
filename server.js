@@ -1,11 +1,12 @@
-/* eslint-disable global-require, no-console*/
+/* eslint-disable global-require */
 const express = require('express');
 const bugsnag = require('bugsnag');
 const cors = require('cors');
 const connect = require('camo').connect;
+
 const config = require('./utils/Configuration');
 const Router = require('./app/routes/Router');
-const logging = require('./logging').logger('server', config.get('Logging.level'));
+const logger = require('./utils/Logger/LoggerFactory').create('server');
 const HTTPError = require('./HTTPError');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -19,21 +20,26 @@ const parser = {
 };
 
 if (SERVER_ENV !== 'local') {
-  bugsnag.register(config.get('BUGSNAG_KEY'), { releaseStage: SERVER_ENV, sendCode: true });
-  app.use(bugsnag.requestHandler);
+  if (config.get('BUGSNAG_KEY')) {
+    bugsnag.register(config.get('BUGSNAG_KEY'), { releaseStage: SERVER_ENV, sendCode: true });
+    app.use(bugsnag.requestHandler);
+  } else {
+    logger.warn('No Bugsnag key found.');
+  }
 }
 
 app.use(cors());
 
 (async () => {
   try {
-    const username = config.get('MONGODB_USERNAME');
-    const password = config.get('MONGODB_PASSWORD');
+    const username = config.get('MONGODB_USERNAME') || '';
+    const password = config.get('MONGODB_PASSWORD') || '';
     const DEFAULT_DB_URI = `mongodb://${username}:${password}@ds145790.mlab.com:45790/local-api-db`;
+
     await connect(process.env.MONGODB_URI || DEFAULT_DB_URI);
-    logging.info('Database connected successfully.');
+    logger.info('Database connected successfully.');
   } catch (err) {
-    logging.error(err);
+    logger.error(`${err.name}: ${err.errmsg}`);
   }
 })();
 
@@ -45,13 +51,14 @@ app.use('/apidoc', express.static(`${__dirname}/apidoc`));
 
 Router.factory(app);
 
-if (SERVER_ENV !== 'local') {
+if (SERVER_ENV !== 'local' && config.get('BUGSNAG_KEY')) {
   bugsnag.onBeforeNotify((notification) => {
     // only notify on 500
     try {
       const error = JSON.parse(notification.events[0].exceptions[0].message);
       return error.status === 500;
     } catch (error) {
+      logger.error(error);
       return true;
     }
   });
@@ -60,15 +67,14 @@ if (SERVER_ENV !== 'local') {
 
 app.use((err, req, res, next) => {
   const error = err && err.name === 'HTTPError' ? err : new HTTPError(500, err);
-  logging.error(error);
+  logger.error(error);
   res.status(error.status).json(error.getError ? error.getError() : error);
 });
 
-process.on('unhandledRejection', (error) => {
-  console.log(error);
-});
+process.on('unhandledRejection', error => logger.error(error));
 
 app.listen(PORT, '0.0.0.0', () => {
-  logging.info(`${NODE_ENV} mode`);
-  logging.info(`Server started at ${PORT}`);
+  const env = `${NODE_ENV.charAt(0).toUpperCase()}${NODE_ENV.slice(1)}`;
+  logger.info(`${env} Mode`);
+  logger.info(`Server started at: port ${PORT}`);
 });

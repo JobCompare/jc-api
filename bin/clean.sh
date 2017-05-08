@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ROOT=$PWD
-TARGETS=("node_modules" "npm-debug.log" "apidoc" "apidoc.json")
+TARGETS=("node_modules" "npm-debug.log" "apidoc" "apidoc.json" "coverage" ".nyc_output")
 ARGUMENTS=( "$@" )
 SHRED=`which shred`
 APIDOC_URL="http://localhost:3000"

@@ -27,6 +27,6 @@ do
   fi
 done
 
-# python "${ROOT}/bin/resources/coverage_parser.py" --from pre-push
+python "${ROOT}/bin/resources/coverage_parser.py" --from pre-push
 
 echo '---------- PRE-PUSH SCRIPT END ----------'

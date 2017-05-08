@@ -6,7 +6,7 @@
     "postinstall": "bash ./bin/postinstall.sh",
     "apidoc": "bash ./bin/pre_apidoc.sh && node_modules/.bin/apidoc -i app/routes/ -o apidoc/",
     "start": "node --harmony server.js",
-    "test": "node_modules/.bin/istanbul cover _mocha tests/**/test*.js",
+    "test": "node_modules/.bin/nyc --reporter=clover --reporter=lcov mocha --recursive tests",
     "lint": "node_modules/.bin/eslint .",
     "clean": "bash ./bin/clean.sh"
   },
@@ -19,6 +19,7 @@
     "bunyan": "^1.8.8",
     "bunyan-loggly": "^1.2.0",
     "camo": "^0.12.3",
+    "colors": "^1.1.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.3",
     "crypto-js": "^3.1.9-1",
@@ -35,8 +36,8 @@
     "eslint": "^3.15.0",
     "eslint-config-airbnb-base": "^11.1.0",
     "eslint-plugin-import": "^2.2.0",
-    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
+    "nyc": "^10.3.0",
     "sinon": "^2.0.0"
   },
   "engines": {
