@@ -10,11 +10,14 @@ from collections import OrderedDict
 
 # About Clover TPC: https://confluence.atlassian.com/pages/viewpage.action?pageId=79986990
 
-THRESHOLD = {
-  'statements': 0.8,
-  'conditionals': 0.7,
-  'methods': 0.8,
-  'overall': 0.8
+with open('%s/bin/resources/coverage_threshold.json' % (os.getcwd())) as data:
+  THRESHOLD = json.load(data, object_pairs_hook=OrderedDict)
+
+SYNONYMS = {
+  'statements': 'Statements',
+  'conditionals': 'Branches',
+  'methods': 'Functions',
+  'elements': 'Overall'
 }
 
 PATH = '%s/coverage/clover.xml' % (os.getcwd())
@@ -41,9 +44,9 @@ coverage = OrderedDict()
 for name in ATTRIBUTES:
   numerator = float(metrics.attrib['covered' + name])
   denominator = float(metrics.attrib[name])
-  
-  if name == 'elements':
-    name = 'overall'
+
+  if name in SYNONYMS:
+    name = SYNONYMS[name]
 
   try:
     coverage[name] = {
@@ -60,9 +63,9 @@ for name in ATTRIBUTES:
 
 # display coverage report in table view
 formatter = '{:>15}' * 4
-thresholds = map(lambda x: 'NaN' if x == -1 else '{:.2f}%'.format(x * 100), THRESHOLD.values())
-coverages = map(lambda x: x['string'], coverage.values())
-data = zip(thresholds, coverages)
+threshold_values = map(lambda x: 'NaN' if x == -1 else '{:.2f}%'.format(x * 100), THRESHOLD.values())
+coverage_values =  map(lambda x: x['string'], coverage.values())
+data = zip(threshold_values, coverage_values)
 result = ['', 'Clover Result:', formatter.format('', *['THRESHOLD', 'ACTUAL', ''])]
 for key, row in zip(coverage.keys(), data):
   if coverage[key]['passed']:
