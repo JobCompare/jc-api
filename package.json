@@ -8,7 +8,9 @@
     "start": "node --harmony server.js",
     "test": "node_modules/.bin/istanbul cover _mocha tests/**/test*.js",
     "lint": "node_modules/.bin/eslint .",
-    "clean": "bash ./bin/clean.sh"
+    "clean": "bash ./bin/clean.sh",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Timothy Kua",
   "license": "MIT",
@@ -27,7 +29,8 @@
     "immutable": "^3.8.1",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.25",
-    "randomatic": "^1.1.6"
+    "randomatic": "^1.1.6",
+    "snyk": "^1.192.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
@@ -42,5 +45,6 @@
   "engines": {
     "node": "7.8.0",
     "npm": "4.2.0"
-  }
+  },
+  "snyk": true
 }
