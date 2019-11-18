@@ -13,7 +13,7 @@
   "author": "Timothy Kua",
   "license": "MIT",
   "dependencies": {
-    "apidoc": "0.17.0",
+    "apidoc": "0.18.0",
     "body-parser": "^1.16.0",
     "bugsnag": "^1.9.1",
     "bunyan": "^1.8.8",
